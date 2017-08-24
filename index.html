@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Simple Time Logger</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- jquery -->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+crossorigin="anonymous"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script>
+
+function log(){
+  var task = $("#form01").val();
+  var comment = $("#form02").val();
+  var time = new Date();
+  var unix = time.getTime() ;
+  var hour = ("0"+(time.getHours())).slice(-2);
+  var minute = ("0"+(time.getMinutes())).slice(-2);
+  var id = "time" + unix ;
+
+  $("#logbody").append("<tr class='"+id+"' ><td>"+task+"</td><td>"+comment+"</td><td class='starttime notinput' data-time='"+unix+"'>"+hour+":"+minute+"</td><td class='endtime notinput'><button data-id='"+id+"' class='notinput btn  finish btn-warning'>終了</button></td><td class='result'></td><td class='notinput'><a class='delete' data-id='"+id+"'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></a></td></tr>");
+}
+
+function save(){
+  var savedata = $("#logbody").html();
+  localStorage.setItem('logger', savedata);
+}
+
+function load(){
+  var loaddata = localStorage.getItem('logger');
+  if(loaddata == "" || loaddata == null){
+
+}else{
+  $("#logbody").html(loaddata);
+  console.log(loaddata);
+}
+}
+
+
+
+$(function(){
+  load()
+  $("#start").click(function(){
+    log();
+    save();
+  });
+$(document).on("click",".delete",function(){
+  $(this).parent().parent().remove();
+  save();
+});
+
+$(document).on("blur","td",function(){
+  save();
+});
+
+$(document).on("blur",".result",function(){
+  $(this).addClass("danger");
+  save();
+});
+
+$(document).on("click",".finish",function(){
+  var time = new Date();
+  var hour = ("0"+(time.getHours())).slice(-2);
+  var minute = ("0"+(time.getMinutes())).slice(-2);
+  var unix = time.getTime() ;
+  $(this).parent().html(hour+":"+minute);
+
+
+  var c = $(this).attr('data-id');
+  var cid = "."+c;
+  $(cid).children(".endtime").attr('data-time',unix);
+
+  var time01 = $(cid).children(".starttime").attr('data-time');
+  var time02 = $(cid).children(".endtime").attr('data-time');
+  var time03 = time02 -  time01;
+  time03 = time03/60/60/1000;
+  time03 = Math.ceil(time03 / 0.25) * 0.25 ;
+  console.log(time03);
+  $(cid).children(".result").html(time03+"H");
+
+  console.log(c);
+  console.log(time03);
+  save();
+});
+});
+</script>
+<style>
+td{
+  -webkit-user-modify: read-write;
+}
+td.notinput{
+  -webkit-user-modify: read-only;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Simple Time Logger</h1>
+    <p>データはブラウザローカルに保存されています。<br>リロード等行ってもデータは保持されますが、キャッシュ削除で消えます。</p>
+    <table class="table table-striped">
+      <tbody id="logbody">
+        <tr><td>タスク名</td><td>コメント</td><td>開始時間</td><td>終了時間</td><td>合計</td><td></td></tr>
+      </tbody>
+      <tr><td class="notinput"><input id="form01" type="text" class="form-control" placeholder="タスク"></td>
+        <td class="notinput"><input id="form02" type="text" class="form-control" placeholder="コメント"></td>
+        <td class="notinput"><button class="btn btn-primary" id="start">スタート</button></td><td></td><td></td><td></td></tr>
+    </table>
+  </div>
+</body>
+</html>
