@@ -27,7 +27,7 @@ function log(){
   var minute = ("0"+(time.getMinutes())).slice(-2);
   var id = "time" + unix ;
 
-  $("#logbody").append("<tr class='"+id+"' ><td>"+task+"</td><td>"+comment+"</td><td class='starttime notinput' data-time='"+unix+"'>"+month+"/"+date+" "+hour+":"+minute+"</td><td class='endtime notinput'><button data-id='"+id+"' class='notinput btn btn-xs finish btn-warning'>終了</button></td><td class='result'></td><td class='notinput'><a class='delete' data-id='"+id+"'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></a></td></tr>");
+  $("#logbody").append("<tr class='"+id+"' ><td>"+task+"</td><td class='hidden-xs'>"+comment+"</td><td class='starttime notinput' data-time='"+unix+"'>"+month+"/"+date+" "+hour+":"+minute+"</td><td class='endtime notinput'><button data-id='"+id+"' class='notinput btn btn-xs finish btn-warning'>終了</button></td><td class='result'></td><td class='notinput'><a class='delete' data-id='"+id+"'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></a></td></tr>");
 }
 
 function save(){
@@ -52,7 +52,7 @@ $(function(){
     log();
     save();
   });
-$(document).on("click",".delete",function(){
+$(document).on("click touchend",".delete",function(){
   $(this).parent().parent().remove();
   save();
 });
@@ -99,6 +99,24 @@ td.notinput{
   -webkit-user-modify: read-only;
   -moz-user-modify: read-only;
 }
+@media screen and (max-width:768px){
+  .sp-fixed{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+  .sp-fixed .notinput{
+    width: 100%;
+    font-size: 16px;
+  }
+  #logbody{
+    border-bottom: 1px solid #ccc;
+  }
+  .table-responsive{
+    border: none;
+  }
+}
 </style>
 </head>
 <body>
@@ -107,14 +125,14 @@ td.notinput{
     <p>データはブラウザローカルに保存されています。<br>リロード等行ってもデータは保持されますが、キャッシュ削除で消えます。</p>
     <table class="table table-striped table-responsive">
       <thead class="thead-inverse">
-        <tr class="bg-primary"><th>タスク名</th><th>コメント</th><th>開始時間</th><th>終了時間</th><th>合計</th><th></th></tr>
+        <tr class="bg-primary"><th>タスク名</th><th class="hidden-xs">コメント</th><th>開始時間</th><th>終了時間</th><th>合計</th><th></th></tr>
       </thead>
       <tbody id="logbody">
       </tbody>
-      <tbody>
+      <tbody class="sp-fixed">
         <tr><td class="notinput"><input id="form01" type="text" class="form-control" placeholder="タスク"></td>
-        <td class="notinput"><input id="form02" type="text" class="form-control" placeholder="コメント"></td>
-        <td class="notinput"><button class="btn btn-primary" id="start">スタート</button></td><td></td><td></td><td></td></tr>
+        <td class="notinput hidden-xs"><input id="form02" type="text" class="form-control" placeholder="コメント"></td>
+        <td class="notinput"><button class="btn btn-primary" id="start">スタート</button></td><td class="hidden-xs"></td><td class="hidden-xs"></td><td class="hidden-xs"></td></tr>
       </tbody>
     </table>
   </div>
