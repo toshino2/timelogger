@@ -52,7 +52,7 @@ $(function(){
     log();
     save();
   });
-$(document).on("click touchstart",".delete",function(){
+$(document).on("click touchstart touchend",".delete",function(){
   $(this).parent().parent().remove();
   save();
 });
